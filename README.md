@@ -25,6 +25,9 @@ The simulation prioritizes biological realism through detailed implementation of
 ### 📊 Sophisticated Biophysics
 
 - **Advanced Reaction-Diffusion Systems**: Multi-species chemical environments modeled with partial differential equations
+- **Complex Environmental Patterns**: Multiple environment types including ecosystems, gradients, patches, and Turing patterns
+- **Seasonal Cycles**: Environmental changes that affect diffusion and reaction rates
+- **Random Environmental Events**: Occasional disasters and resource booms that challenge adaptation
 - **Deformable Cell Membranes**: Spring-mass systems for realistic cell shapes and mechanical properties
 - **Physical Forces & Interactions**: Cell adhesion, collision detection and resolution
 - **Chemical Gradients**: Realistic diffusion and signaling molecule propagation
@@ -40,8 +43,11 @@ The simulation prioritizes biological realism through detailed implementation of
 
 - **Cell Differentiation**: Spatial and neighbor-dependent specialization into different cell types
 - **Tissue Formation**: Cell adhesion properties creating emergent organization
-- **Primitive Neural Systems**: Connected networks of signaling nerve cells
+- **Neural Networks**: Advanced neural systems with learning and adaptation
 - **Adaptive Behaviors**: Environment-responsive movement and resource gathering
+- **Hebbian Learning**: Neural networks that adapt based on experience ("neurons that fire together, wire together")
+- **Curiosity-Driven Exploration**: Organisms can develop exploratory behaviors based on novelty
+- **Memory and Experience Replay**: Organisms can remember and learn from past experiences
 
 ### 🎨 Detailed Visualization
 
@@ -113,6 +119,10 @@ python main.py --phase visualize --vis-type multicell
 │   ├── adhesion.py        # Cell-cell adhesion physics
 │   └── simulation.py      # Multicellular simulation controller
 │
+├── intelligence/          # Intelligence simulation
+│   ├── neural_network.py  # Advanced neural network with learning
+│   └── simulation.py      # Intelligence simulation controller
+│
 ├── physics/               # Core physics engines
 │   ├── diffusion.py       # Reaction-diffusion systems
 │   ├── mechanics.py       # Cell mechanics and deformation
@@ -137,19 +147,26 @@ python main.py --phase visualize --vis-type multicell
 This simulation implements several key scientific models:
 
 - **Gray-Scott Reaction-Diffusion**: Models pattern formation in chemical systems
+- **Turing Patterns**: Self-organizing pattern formation in reaction-diffusion systems
 - **Gene Regulatory Networks**: Boolean and continuous models of gene expression
 - **Cellular Potts Model Principles**: For cell shape, adhesion, and movement
 - **Signaling Network Models**: Based on systems biology approaches
+- **Hebbian Learning**: Biologically-inspired learning mechanism for neural networks
+- **Neuromodulation**: Chemical signals that modify neural network behavior
 - **Artificial Neural Networks**: With spatial organization and signal propagation
+- **Curiosity-Driven Learning**: Intrinsic motivation systems for exploration
 
 ## 🛠️ Customization
 
 The simulation can be extensively customized through:
 
 1. **Configuration Parameters**: Adjust key settings in `config.py`
-2. **Environmental Conditions**: Modify nutrient availability and distribution
-3. **Cell Properties**: Customize gene networks, metabolic rates, and signaling sensitivity
-4. **Evolutionary Pressures**: Change selection mechanisms and mutation rates
+2. **Environmental Patterns**: Choose between ecosystem, gradient, patches, or Turing patterns
+3. **Neural Network Parameters**: Customize learning rates, network architecture, and memory capacity
+4. **Environmental Conditions**: Modify nutrient availability, seasonal effects, and random events
+5. **Cell Properties**: Customize gene networks, metabolic rates, and signaling sensitivity
+6. **Evolutionary Pressures**: Change selection mechanisms and mutation rates
+7. **Organism Traits**: Adjust aggression, sociability, exploration, and metabolism traits
 
 ## 📊 Example Results
 
@@ -170,17 +187,34 @@ Cell types: undifferentiated: 152
 
 ```
 Multicellular simulation summary:
-Total organisms: 6
-Total cells: 10
-Mean organism size: 1.67 cells
-Mean complexity: 10.16
-Organisms with neural systems: 0
+Total organisms: 8
+Total cells: 34
+Mean organism size: 4.25 cells
+Mean complexity: 10.00
+Organisms with neural systems: 1
 
 Organism 0:
-  Cells: 1
-  Energy: 24.6
-  Cell types: nerve: 1
+  Cells: 6
+  Energy: 52.6
+  Cell types: muscle: 4, nerve: 2
   Neural cells: 0
+
+Organism 2:
+  Cells: 6
+  Energy: 79.9
+  Cell types: nerve: 3, skin: 3
+  Neural cells: 3
+```
+
+### Intelligence Simulation
+
+```
+Intelligence Iteration 0: 5 organisms, Mean energy: 99.3, Mean fitness: 0.10
+Intelligence Iteration 10: 5 organisms, Mean energy: 91.8, Mean fitness: 0.65
+Intelligence Iteration 20: 11 organisms, Mean energy: 37.0, Mean fitness: 0.36
+
+Most fit organism: Fitness=0.32, Age=150, Energy=24.1
+Traits: aggression=0.37, sociability=0.77, exploration=0.99, metabolism=0.12
 ```
 
 ## 🔭 Future Development
@@ -188,7 +222,11 @@ Organism 0:
 - **Enhanced Abiogenesis Simulation**: Autocatalytic networks and polymerization
 - **Spatial Genetics**: Geographic isolation and local adaptation
 - **Sexual Reproduction**: Genetic recombination and mating strategies
-- **Advanced Neural Systems**: Learning, memory, and behavior optimization
+- **Reinforcement Learning**: More advanced learning algorithms for neural networks
+- **Social Dynamics**: More complex interactions between organisms including cooperation and competition
+- **Predator-Prey Relationships**: Food web dynamics and co-evolutionary arms races
+- **Genetic Programming**: Evolution of neural network architecture itself
+- **Developmental Processes**: Growth and development stages for organisms
 - **Evolutionary Innovations**: Major transitions like photosynthesis or multicellularity
 
 ## 🤝 Contributing

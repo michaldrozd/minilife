@@ -11,101 +11,13 @@ import sys
 
 # Import simulation phases
 from abiogenesis.chemical import Chemical  # Placeholder for now
+from abiogenesis.chemical import Chemical
+from abiogenesis.simulation import run_abiogenesis_simulation # Import the new abiogenesis simulation function
 from cellular.simulation import run_cellular_simulation, AdvancedCellularSimulation
 from cellular.cell import AdvancedCell  # For creating test cells
-
-
-def simulate_abiogenesis(max_iter=1000, complexity_threshold=10):
-    """
-    Simulate the origin of complex organic molecules.
-    This is a placeholder until we implement the full abiogenesis module.
-    """
-    print("Simulating abiogenesis...")
-    chemicals = [Chemical(1) for _ in range(10)]  # Placeholder
-    # Add abiogenesis simulation code here
-    return chemicals
-
-
-def simulate_single_cell_life(max_iterations=500):
-    """Simulate single-cell life with detailed biophysics."""
-    print("Simulating single-cell life...")
-    
-    # Set up callback for visualization and reporting
-    def visualization_callback(simulation, iteration):
-        if iteration % 50 == 0:
-            stats = simulation.get_stats()
-            print(f"Iteration {iteration}: {stats['cell_count'][-1]} cells, "
-                  f"mean energy: {stats['mean_energy'][-1]:.2f}, "
-                  f"mean DNA complexity: {stats['mean_dna_complexity'][-1]:.2f}")
-    
-    # Define stop condition (stop if cell count exceeds threshold or drops to zero)
-    def stop_condition(simulation):
-        if len(simulation.cells) > 150:
-            print("Cell population threshold reached!")
-            return True
-        if len(simulation.cells) == 0:
-            print("All cells have died. Simulation ended.")
-            return True
-        return False
-    
-    # Run the simulation
-    simulation = run_cellular_simulation(
-        max_iterations=max_iterations,
-        visualization_callback=visualization_callback,
-        stop_condition=stop_condition
-    )
-    
-    # Return the cells for the next simulation phase
-    return simulation.cells
-
-
-def simulate_multicellularity(cells, max_iterations=300):
-    """Simulate the emergence of multicellular organisms."""
-    print("Simulating multicellularity...")
-    
-    # Set up callback for visualization and reporting
-    def visualization_callback(simulation, iteration):
-        if iteration % 50 == 0:
-            stats = simulation.get_stats()
-            org_count = stats['organism_count'][-1] if stats['organism_count'] else 0
-            cell_count = stats['total_cells'][-1] if stats['total_cells'] else 0
-            neuron_count = stats['mean_neuron_count'][-1] if stats['mean_neuron_count'] else 0
-            print(f"Iteration {iteration}: {org_count} organisms, "
-                  f"{cell_count} total cells, {neuron_count:.2f} avg neurons")
-    
-    # Define stop condition (stop if organization count exceeds threshold or drops to zero)
-    def stop_condition(simulation):
-        if len(simulation.organisms) > 20:
-            print("Organism population threshold reached!")
-            return True
-        if len(simulation.organisms) == 0 and simulation.iteration > 50:
-            print("All organisms have died. Simulation ended.")
-            return True
-        return False
-    
-    # Run the multicellular simulation
-    from multicellular.simulation import run_multicellular_simulation
-    simulation = run_multicellular_simulation(
-        cells=cells,
-        max_iterations=max_iterations,
-        visualization_callback=visualization_callback,
-        stop_condition=stop_condition
-    )
-    
-    # Return the organisms for the next simulation phase
-    return simulation.organisms
-
-
-def simulate_intelligence(organisms, max_iterations=300):
-    """Simulate the emergence of intelligence."""
-    print("Simulating intelligence...")
-    
-    # Placeholder for intelligence simulation
-    print("Intelligence simulation not yet implemented in this version.")
-    # Will be implemented in the next phase
-    
-    return []  # Return placeholder intelligent organisms
-
+from multicellular.simulation import run_multicellular_simulation
+from intelligence.simulation import run_intelligence_simulation # Import the new intelligence simulation function
+import config # Import the config module
 
 def visualize_only(vis_type=None):
     """
@@ -228,57 +140,65 @@ def main():
         return
     
     # Phase 1: Abiogenesis
+    # Phase 1: Abiogenesis
+    chemicals = []
     if args.phase in ["abiogenesis", "all"]:
-        chemicals = simulate_abiogenesis(max_iter=args.iterations)
+        chemicals = run_abiogenesis_simulation(max_iter=args.iterations, complexity_threshold=config.CHEMICAL_COMPLEXITY_THRESHOLD)
         if not args.non_interactive:
             try:
                 input("Press Enter to proceed to Single-Cell Life simulation...")
             except EOFError:
                 print("Running in non-interactive mode, continuing automatically...")
-    else:
-        chemicals = []  # Placeholder
     
     # Phase 2: Single-Cell Life
+    cells = []
     if args.phase in ["cell", "all"]:
-        cells = simulate_single_cell_life(max_iterations=args.iterations)
+        # Use chemicals from previous phase as potential starting point (basic placeholder)
+        # In a real scenario, this would involve seeding the environment/simulation based on chemicals
+        
+        # For now, still use the initial cells from config/helper, but acknowledge chemicals
+        print(f"Starting Single-Cell Life simulation, potentially influenced by {len(chemicals)} complex chemicals...")
+        
+        cells = run_cellular_simulation(max_iterations=args.iterations)
         
         # Instead of visualization, print summary of cells
-        if cells:
+        if cells and cells.cells: # Check if simulation object exists and has cells
             print("\nCellular simulation summary:")
-            cell_count = len(cells)
+            cell_count = len(cells.cells)
             cell_types = {}
-            for cell in cells:
+            for cell in cells.cells:
                 cell_type, _ = cell.get_cell_type()
                 cell_types[cell_type] = cell_types.get(cell_type, 0) + 1
-            
-            mean_energy = np.mean([cell.energy for cell in cells])
-            mean_dna = np.mean([cell.dna_complexity for cell in cells])
-            
+
+            mean_energy = np.mean([cell.energy for cell in cells.cells]) if cells.cells else 0
+            mean_dna = np.mean([cell.dna_complexity for cell in cells.cells]) if cells.cells else 0
+
             print(f"Total cells: {cell_count}")
             print(f"Mean energy: {mean_energy:.2f}")
             print(f"Mean DNA complexity: {mean_dna:.2f}")
             print(f"Cell types: {', '.join(f'{t}: {c}' for t, c in cell_types.items() if c > 0)}")
-        
+
         if not args.non_interactive:
             try:
                 input("Press Enter to proceed to Multicellularity simulation...")
             except EOFError:
                 print("Running in non-interactive mode, continuing automatically...")
-    else:
-        cells = []  # Placeholder
     
     # Phase 3: Multicellularity
+    multicell_simulation = None
     if args.phase in ["multicellular", "all"]:
-        organisms = simulate_multicellularity(cells, max_iterations=args.iterations)
-        
+        # Use cells from previous phase as initial input
+        # Pass the list of cells from the cellular simulation object
+        multicell_simulation = run_multicellular_simulation(cells=cells.cells if cells else [], max_iterations=args.iterations)
+
         # Instead of visualization, print summary of organisms
-        if organisms:
+        if multicell_simulation and multicell_simulation.organisms: # Check if simulation object exists and has organisms
             print("\nMulticellular simulation summary:")
-            org_count = len(organisms)
-            total_cells = sum(len(org.cells) for org in organisms)
+            org_count = len(multicell_simulation.organisms)
+            total_cells = sum(len(org.cells) for org in multicell_simulation.organisms)
             mean_size = total_cells / org_count if org_count > 0 else 0
-            mean_complexity = np.mean([org.complexity for org in organisms]) if organisms else 0
-            neural_orgs = sum(1 for org in organisms if org.nervous_system is not None)
+            mean_complexity = np.mean([org.complexity for org in multicell_simulation.organisms]) if multicell_simulation.organisms else 0
+            neural_orgs = sum(1 for org in multicell_simulation.organisms if org.nervous_system is not None)
             
             print(f"Total organisms: {org_count}")
             print(f"Total cells: {total_cells}")
@@ -287,7 +207,7 @@ def main():
             print(f"Organisms with neural systems: {neural_orgs}")
             
             # Print details of a few organisms
-            for i, org in enumerate(organisms[:3]):  # Show details for up to 3 organisms
+            for i, org in enumerate(multicell_simulation.organisms[:3]):  # Show details for up to 3 organisms
                 cell_types = {}
                 for cell in org.cells:
                     cell_type, _ = cell.get_cell_type()
@@ -304,12 +224,14 @@ def main():
                 input("Press Enter to proceed to Intelligence simulation...")
             except EOFError:
                 print("Running in non-interactive mode, continuing automatically...")
-    else:
-        organisms = []  # Placeholder
     
     # Phase 4: Intelligence
+    intelligent_organisms = []
     if args.phase in ["intelligence", "all"]:
-        intelligent_organisms = simulate_intelligence(organisms, max_iterations=args.iterations)
+         # Use organisms from previous phase as initial input
+         # Pass the list of organisms from the simulation object
+        organisms_list = multicell_simulation.organisms if multicell_simulation else []
+        intelligent_organisms = run_intelligence_simulation(organisms_list, max_iterations=args.iterations)
     
     print("Advanced Evolutionary Simulation Complete.")
 

@@ -77,8 +77,7 @@ class AdvancedCellularSimulation:
             cell.metabolize()
         
         # Resolve collisions between cells
-        physical_cells = [cell.physical_cell for cell in self.cells]
-        self.collision_resolver.resolve_collisions(physical_cells)
+        self.collision_resolver.resolve_collisions(self.cells)
         
         # Cell division
         new_cells = []
